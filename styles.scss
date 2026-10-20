@@ -1,0 +1,40 @@
+/*-- scss:defaults --*/
+$primary: #1f4e79;
+$navbar-bg: #12324f;
+$font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+$headings-font-weight: 700;
+
+/*-- scss:rules --*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+.page-columns { max-width: 1200px; margin: 0 auto; }
+.hero { padding: 1.5rem 0 0.5rem; }
+.hero h1 { font-size: 2.4rem; margin-bottom: .25rem; }
+.hero .when { color: #5b6b7a; font-size: 1.15rem; }
+.agenda { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem; }
+.agenda td { padding: .9rem .75rem; border-bottom: 1px solid #e3e8ee; vertical-align: top; }
+.agenda td.t { white-space: nowrap; font-weight: 700; color: $primary; width: 9rem; font-variant-numeric: tabular-nums; }
+.agenda .what { font-weight: 600; }
+.agenda .how { color: #5b6b7a; font-size: .95rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1rem 0 2rem; }
+.card-t { border: 1px solid #e3e8ee; border-radius: 10px; padding: 1.1rem 1.2rem; border-top: 5px solid var(--c); background: #fff; }
+.card-t h3 { margin: 0 0 .4rem; font-size: 1.25rem; color: var(--c); }
+.card-t .prompt { font-weight: 600; margin-bottom: .5rem; }
+.card-t .eg { color: #5b6b7a; font-size: .92rem; }
+.card-t .viz { font-size: .85rem; margin-top: .6rem; color: #33424f; }
+.btn-padlet { display: inline-block; margin-top: .8rem; padding: .45rem .9rem; border-radius: 6px; background: var(--c); color: #fff !important; text-decoration: none; font-weight: 600; }
+.qr { width: 120px; height: 120px; margin-top: .6rem; display: block; }
+#map { height: 78vh; min-height: 480px; border-radius: 10px; border: 1px solid #e3e8ee; }
+.map-wrap { display: grid; grid-template-columns: 1fr 240px; gap: 1rem; }
+.people { max-height: 78vh; overflow-y: auto; font-size: .92rem; }
+.people button { display: flex; align-items: center; gap: .5rem; width: 100%; text-align: left; border: 0; background: none; padding: .3rem .4rem; border-radius: 6px; }
+.people button:hover { background: #eef3f8; }
+.people .sw { width: 18px; height: 4px; border-radius: 2px; flex: none; }
+.people .km { margin-left: auto; white-space: nowrap; color: #8796a5; font-variant-numeric: tabular-nums; }
+.stats { font-size: 1.05rem; color: #33424f; margin: .25rem 0 1rem; }
+.stats b { color: $primary; }
+.leaflet-popup-content { margin: 10px; width: 300px !important; }
+.leaflet-popup-content img { width: 100%; border-radius: 6px; display: block; }
+.leaflet-popup-content .pname { font-weight: 700; margin-top: .4rem; }
+.leaflet-popup-content .pcap { color: #5b6b7a; }
+.cam { background: #fff; border: 2px solid var(--c); border-radius: 50%; width: 26px !important; height: 26px !important; display: flex; align-items: center; justify-content: center; font-size: 13px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+@media (max-width: 800px) { .map-wrap { grid-template-columns: 1fr; } .people { max-height: 240px; } #map { height: 65vh; } }

@@ -1,0 +1,22 @@
+---
+title: " "
+---
+
+::: {.hero}
+# GDSL Away Day
+<div class="when">Wednesday 21 October 2026 · 13:00–15:00</div>
+:::
+
+This year, no lightning talks. Instead: a map of how we all move through Liverpool, some quick conversations, and a world café to find out what we each work on, struggle with, and could teach each other.
+
+## Agenda
+
+<table class="agenda">
+<tr><td class="t">13:00 – 13:05</td><td><div class="what">Welcome & Our Liverpool</div><div class="how">We open with the <a href="map.html">map of everyone's routes and photos</a>.</div></td></tr>
+<tr><td class="t">13:05 – 13:15</td><td><div class="what">Line-up</div><div class="how">Line up by the length of your route, shortest to longest, then count off 1–4. That's your group for the afternoon.</div></td></tr>
+<tr><td class="t">13:15 – 13:30</td><td><div class="what">Quick pairs</div><div class="how">Three 4-minute chats within your group. Prompt: <em>tell me about the photo on your route.</em></div></td></tr>
+<tr><td class="t">13:30 – 14:35</td><td><div class="what">World café</div><div class="how">Four tables (Data, Place, Method, Problem), about 15 minutes each. Groups rotate; hosts stay put. Ideas go straight onto the <a href="tables.html">Padlet</a>. Coffee is on the tables.</div></td></tr>
+<tr><td class="t">14:35 – 15:00</td><td><div class="what">Harvest & pitches</div><div class="how">Each host pitches their table's highlights (about 4 minutes) with the Padlet on screen. We vote on the Problem board, then close with the map.</div></td></tr>
+</table>
+
+[Explore the map →](map.qmd){.btn .btn-primary .btn-lg} &nbsp; [World café tables & Padlet →](tables.qmd){.btn .btn-outline-primary .btn-lg}

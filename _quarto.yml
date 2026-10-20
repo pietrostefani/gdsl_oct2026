@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: docs
+  resources:
+    - data/
+    - assets/
+
+website:
+  title: "GDSL Away Day 2026"
+  page-navigation: false
+  navbar:
+    left:
+      - href: index.qmd
+        text: Agenda
+      - href: map.qmd
+        text: Our Liverpool
+      - href: tables.qmd
+        text: World café
+  page-footer:
+    center: "Geographic Data Science Lab · University of Liverpool · 21 October 2026"
+
+format:
+  html:
+    theme: [cosmo, styles.scss]
+    toc: false
+    page-layout: full
+    smooth-scroll: true
+
+execute:
+  echo: false
+  warning: false

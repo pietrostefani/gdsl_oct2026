@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "photos",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "Demo Person One", "caption": "Morning light on the way in", "img": "data/photos/demo-person-one.jpg", "placed": "route midpoint" }, "geometry": { "type": "Point", "coordinates": [ -2.976733220357384, 53.399844508921959 ] } },
+{ "type": "Feature", "properties": { "name": "Demo Person Three", "caption": "", "img": "data/photos/demo-person-three.jpg", "placed": "route midpoint" }, "geometry": { "type": "Point", "coordinates": [ -2.979833865502146, 53.406989614383207 ] } },
+{ "type": "Feature", "properties": { "name": "Demo Person Two", "caption": "The view from Princes Park", "img": "data/photos/demo-person-two.jpg", "placed": "photo GPS" }, "geometry": { "type": "Point", "coordinates": [ -2.9375, 53.3925 ] } }
+]
+}
