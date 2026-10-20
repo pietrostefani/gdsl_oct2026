@@ -2,7 +2,7 @@
 title: "World café"
 ---
 
-Four tables, about 15 minutes each. Hosts stay at their table; groups rotate. Add your answers to the Padlet from your phone: scan the QR code on the table or use the links in the table.
+Four tables, about 15 minutes each. Hosts stay at their table; groups rotate. Everything goes onto **two Padlet boards** from your phone: scan the QR code or tap the button. The first time you post, Padlet asks for a name: use your first name.
 
 ```{python}
 #| output: asis
@@ -12,44 +12,56 @@ import qrcode, qrcode.image.svg
 
 v = yaml.safe_load(Path("_variables.yml").read_text())
 
-tables = [
-    ("Data", "#1f77b4", v["padlet_data"],
-     "The weirdest or messiest dataset you've worked with.",
-     "Satellite imagery with cloud cover over every scene; GPS traces with gaps; geotagged social media posts; admin boundaries that change every census; surveys or social statistics with inconsistent coding.",
-     "Word cloud of dataset types, plus a 'messiest' ranking."),
-    ("Place", "#2ca02c", v["padlet_place"],
-     "A place your research has taken you, physically or digitally. More than one is welcome!",
-     "Fieldwork in Beirut; flood maps of Karachi seen from space; mobility data across Ukraine; Liverpool neighbourhoods on Street View.",
-     "Pins on a world map."),
-    ("Method", "#d62728", v["padlet_method"],
-     "A method you wish you knew, and one you could teach.",
-     "Causal inference (difference-in-differences, regression discontinuity); spatial econometrics; sensitivity analysis; geospatial machine learning; remote sensing classification; network analysis.",
-     "Two columns, 'want' and 'teach', to show matches."),
-    ("Problem", "#9467bd", v["padlet_problem"],
-     "The question you'd work on with unlimited time and money, in 5 words max.",
-     "\"Where do displaced people go?\" · \"Can satellites measure poverty?\" · \"Who suffers most from heat?\"",
-     "A board of short questions, upvoted at the end."),
-]
-
 def qr_svg(url):
     img = qrcode.make(url, image_factory=qrcode.image.svg.SvgPathImage, box_size=10, border=1)
     buf = io.BytesIO(); img.save(buf)
     s = buf.getvalue().decode()
     return s[s.find("<svg"):].replace("<svg", '<svg class="qr"', 1)
 
-out = ['<table class="cafe"><thead><tr><th>Table</th><th>Prompt</th><th>Examples</th><th>On the Padlet</th><th></th></tr></thead><tbody>']
-for name, c, url, prompt, eg, viz in tables:
-    ready = "REPLACE" not in url
-    link = f'<a class="btn-padlet" href="{html.escape(url)}" target="_blank">Padlet</a>' if ready else '<span class="soon">link soon</span>'
-    out.append(f'<tr style="--c:{c}"><td class="tname">{name}</td><td class="tprompt">{html.escape(prompt)}</td>'
-               f'<td class="teg">{html.escape(eg)}</td><td class="tviz">{html.escape(viz)}</td><td>{link}</td></tr>')
+# Board -> its columns, in the order they appear on Padlet
+boards = [
+  ("Board 1 · World café", "Columns for Data, Method and Problem", v["padlet_cafe"], [
+    ("Data", "#1f77b4", "Data: our messiest datasets",
+     "The weirdest or messiest dataset you've worked with.",
+     "Satellite imagery with cloud over every scene; GPS traces with gaps; geotagged social media posts; admin boundaries that change every census; surveys with inconsistent coding.",
+     "Title: the dataset type. Body: the story. Vote for the messiest."),
+    ("Method", "#d62728", "Method: I want to learn…",
+     "A method you wish you knew…",
+     "Causal inference (difference-in-differences, regression discontinuity); spatial econometrics; sensitivity analysis.",
+     "Title: the method. Body: what you'd use it for."),
+    ("", "#d62728", "Method: I can teach…",
+     "…and one you could teach.",
+     "Geospatial machine learning; remote sensing classification; network analysis.",
+     "Title: the method. Look for a match in the column next door."),
+    ("Problem", "#9467bd", "Problem: unlimited time & money",
+     "The question you'd work on with unlimited time and money.",
+     "“Where do displaced people go?” · “Can satellites measure poverty?” · “Who suffers most from heat?”",
+     "Title only, 5 words max. Vote for your favourites; the top questions are pitched at the end."),
+  ]),
+  ("Board 2 · Our places", "A world map", v["padlet_place"], [
+    ("Place", "#2ca02c", "Map: tap + and search a place",
+     "A place your research has taken you, physically or digitally. More than one is welcome!",
+     "Fieldwork in Beirut; flood maps of Karachi seen from space; mobility data across Ukraine; Liverpool neighbourhoods on Street View.",
+     "Drop a pin, add a line about it. Add “(digital)” to the title if you got there remotely."),
+  ]),
+]
+
+out = ['<table class="cafe"><thead><tr><th>Table</th><th>On Padlet</th><th>Prompt</th><th>Examples</th><th>How to post</th></tr></thead><tbody>']
+for bname, bdesc, url, rows in boards:
+    out.append(f'<tr class="board"><td colspan="5"><span class="bname">{html.escape(bname)}</span> '
+               f'<span class="bdesc">{html.escape(bdesc)}</span>'
+               f'<a class="btn-padlet board-btn" href="{html.escape(url)}" target="_blank">Open board ↗</a></td></tr>')
+    for name, c, col, prompt, eg, how in rows:
+        out.append(f'<tr style="--c:{c}"><td class="tname">{name}</td><td class="tcol">{html.escape(col)}</td>'
+                   f'<td class="tprompt">{html.escape(prompt)}</td><td class="teg">{html.escape(eg)}</td>'
+                   f'<td class="tviz">{html.escape(how)}</td></tr>')
 out.append("</tbody></table>")
-if any("REPLACE" not in t[2] for t in tables):
-    out.append('<h2>Scan to add to the Padlet</h2><div class="qrs">')
-    for name, c, url, *_ in tables:
-        if "REPLACE" not in url:
-            out.append(f'<div class="qrbox" style="--c:{c}"><div class="tname">{name}</div>{qr_svg(url)}</div>')
-    out.append("</div>")
+
+out.append('<h2>Scan to post</h2><div class="qrs">')
+for bname, bdesc, url, rows in boards:
+    out.append(f'<div class="qrbox"><div class="tname">{html.escape(bname)}</div>'
+               f'<div class="bdesc">{" · ".join(dict.fromkeys(r[0] for r in rows if r[0]))}</div>{qr_svg(url)}</div>')
+out.append("</div>")
 print("\n".join(out))
 ```
 

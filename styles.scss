@@ -73,3 +73,17 @@ $headings-font-weight: 700;
 .logos .hero-logo { margin-bottom: 0; }
 .logos .uol { height: 64px; }
 @media (max-width: 600px) { .logos .hero-logo { height: 60px; } .logos .uol { height: 44px; } }
+.cafe tr.board td { background: #0e1e25; color: #fff; border-left: 0 !important; padding: .7rem .9rem; }
+.cafe tr.board .bname { font-weight: 700; font-size: 1.1rem; margin-right: .6rem; }
+.cafe tr.board .bdesc { color: #b9c7d3; font-size: .9rem; }
+.cafe tr.board .board-btn { float: right; margin-top: -.15rem; background: $gdsl-teal; }
+.cafe .tcol { font-size: .88rem; font-weight: 600; color: #33424f; white-space: nowrap; }
+.cafe .tprompt { width: 22%; }
+.cafe .teg { width: 28%; }
+.cafe .tviz { width: 22%; font-size: .92rem; }
+.qrbox { border-top-color: #0e1e25; }
+.qrbox .tname { color: #0e1e25; }
+.qrbox .bdesc { color: #5b6b7a; font-size: .9rem; }
+.qrbox .qr { width: 200px; height: 200px; }
+.qrs { grid-template-columns: repeat(auto-fit, minmax(240px, 320px)); }
+@media (max-width: 800px) { .cafe tr.board { display: block; border-left: 0; } .cafe tr.board .board-btn { float: none; display: inline-block; margin-top: .5rem; } .cafe .tcol { white-space: normal; } }
