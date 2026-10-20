@@ -6,9 +6,11 @@ project:
     - assets/
 
 website:
-  title: "GDSL Away Day 2026"
+  title: "GDSL Away Day"
+  favicon: assets/gdsl_icon.png
   page-navigation: false
   navbar:
+    logo: assets/gdsl_icon.png
     left:
       - href: index.qmd
         text: Agenda

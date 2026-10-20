@@ -1,6 +1,8 @@
 /*-- scss:defaults --*/
-$primary: #1f4e79;
-$navbar-bg: #12324f;
+$primary: #3f6fae;
+$gdsl-teal: #5fa8bf;
+$gdsl-ink: #0e1e25;
+$navbar-bg: #0e1e25;
 $font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 $headings-font-weight: 700;
 
@@ -24,7 +26,7 @@ $headings-font-weight: 700;
 .btn-padlet { display: inline-block; margin-top: .8rem; padding: .45rem .9rem; border-radius: 6px; background: var(--c); color: #fff !important; text-decoration: none; font-weight: 600; }
 .qr { width: 120px; height: 120px; margin-top: .6rem; display: block; }
 #map { height: 78vh; min-height: 480px; border-radius: 10px; border: 1px solid #e3e8ee; }
-.map-wrap { display: grid; grid-template-columns: 1fr 240px; gap: 1rem; }
+.map-wrap { display: grid; grid-template-columns: 1fr 280px; gap: 1rem; }
 .people { max-height: 78vh; overflow-y: auto; font-size: .92rem; }
 .people button { display: flex; align-items: center; gap: .5rem; width: 100%; text-align: left; border: 0; background: none; padding: .3rem .4rem; border-radius: 6px; }
 .people button:hover { background: #eef3f8; }
@@ -38,3 +40,13 @@ $headings-font-weight: 700;
 .leaflet-popup-content .pcap { color: #5b6b7a; }
 .cam { background: #fff; border: 2px solid var(--c); border-radius: 50%; width: 26px !important; height: 26px !important; display: flex; align-items: center; justify-content: center; font-size: 13px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
 @media (max-width: 800px) { .map-wrap { grid-template-columns: 1fr; } .people { max-height: 240px; } #map { height: 65vh; } }
+.hero-logo { height: 92px; margin-bottom: 1rem; }
+.navbar-logo { max-height: 34px; }
+.map-tools { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.map-tools button { border: 1px solid #cfd8e2; background: #fff; border-radius: 999px; padding: .3rem .9rem; font-size: .9rem; font-weight: 600; color: #33424f; }
+.map-tools button.on { background: $gdsl-ink; color: #fff; border-color: $gdsl-ink; }
+.thumb { width: 46px !important; height: 46px !important; border-radius: 50%; border: 3px solid var(--c); background-size: cover; background-position: center; box-shadow: 0 2px 6px rgba(0,0,0,.35); transition: transform .15s; }
+.thumb:hover { transform: scale(1.25); }
+.leaflet-popup-content { width: 340px !important; }
+.people .cam-s { font-size: .8rem; opacity: .7; }
+.route-label { background: rgba(255,255,255,.92); border: 0; box-shadow: 0 1px 4px rgba(0,0,0,.25); font-weight: 600; }

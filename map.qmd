@@ -11,11 +11,18 @@ routes = json.loads(Path("data/routes.geojson").read_text())
 photos = json.loads(Path("data/photos.geojson").read_text())
 n = len(routes["features"])
 km = sum(f["properties"]["km"] for f in routes["features"])
-print(f'<div class="stats"><b>{n}</b> people · <b>{km:,.0f} km</b> of Liverpool · '
+print(f'<div class="stats"><b>{n}</b> of us · <b>{km:,.0f} km</b> of routes · '
       f'<b>{len(photos["features"])}</b> photos. Hover over a route to see whose it is; '
-      f'click a 📷 to see the photo.</div>')
+      f'click a photo to open it.</div>')
 print(f'<script>window.GDSL_ROUTES = {json.dumps(routes)}; window.GDSL_PHOTOS = {json.dumps(photos)};</script>')
 ```
+
+<div class="map-tools">
+<button id="v-city" class="on">Liverpool</button>
+<button id="v-all">Everyone (incl. long commutes)</button>
+<button id="v-photos">Photos only</button>
+<button id="v-tour">▶ Photo tour</button>
+</div>
 
 <div class="map-wrap">
 <div id="map"></div>
@@ -26,66 +33,113 @@ print(f'<script>window.GDSL_ROUTES = {json.dumps(routes)}; window.GDSL_PHOTOS = 
 <script src="assets/leaflet/leaflet.js"></script>
 <script>
 (function () {
-  const palette = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2",
-                   "#17becf","#bcbd22","#3b5ba5","#e6550d","#31a354","#a50f15","#6a51a3",
-                   "#843c39","#c51b8a","#0b8fa3","#7f7f00"];
+  // colours: GDSL blues/teals first, then a wider categorical set
+  const palette = ["#3f6fae","#e4572e","#2a9d8f","#9c4dcc","#f2a541","#d62d6b","#5fa8bf","#6a994e",
+                   "#c1440e","#1d3557","#b5838d","#ef476f","#118ab2","#8d6e1f","#7b2cbf","#06a77d",
+                   "#e76f51","#4361ee","#bc4749","#264653","#ff8fab","#588157"];
+  const CITY = L.latLngBounds([53.378, -3.005], [53.428, -2.925]);
+
   const map = L.map("map", { zoomSnap: 0.25, scrollWheelZoom: true });
   L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
     subdomains: "abcd", maxZoom: 19
   }).addTo(map);
 
-  const colourOf = {}, layerOf = {};
   const routes = window.GDSL_ROUTES.features;
+  const photos = window.GDSL_PHOTOS.features;
+  const colourOf = {}, layerOf = {}, markerOf = {};
   routes.forEach((f, i) => { colourOf[f.properties.name] = palette[i % palette.length]; });
+  const esc = s => String(s || "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  const highlight = name => {
+    const l = layerOf[name]; if (!l) return;
+    l.setStyle({ weight: 10, opacity: 1 }); l.bringToFront();
+  };
+  const unhighlight = name => { const l = layerOf[name]; if (l) routeLayer.resetStyle(l); };
+
+  // white casing underneath makes routes readable where they overlap
+  const casing = L.geoJSON(window.GDSL_ROUTES, {
+    style: { color: "#fff", weight: 8, opacity: 0.9, lineCap: "round", lineJoin: "round" },
+    interactive: false
+  }).addTo(map);
 
   const routeLayer = L.geoJSON(window.GDSL_ROUTES, {
-    style: f => ({ color: colourOf[f.properties.name], weight: 5, opacity: 0.85, lineCap: "round" }),
-    onEachFeature: (f, layer) => {
-      layerOf[f.properties.name] = layer;
-      layer.bindTooltip(`<b>${f.properties.name}</b> · ${f.properties.km} km`, { sticky: true });
-      layer.on("mouseover", () => { layer.setStyle({ weight: 9, opacity: 1 }); layer.bringToFront(); });
-      layer.on("mouseout",  () => routeLayer.resetStyle(layer));
-    }
-  }).addTo(map);
-
-  const esc = s => String(s || "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const photoLayer = L.geoJSON(window.GDSL_PHOTOS, {
-    pointToLayer: (f, ll) => L.marker(ll, { icon: L.divIcon({
-      className: "", iconSize: [26, 26], iconAnchor: [13, 13],
-      html: `<div class="cam" style="--c:${colourOf[f.properties.name] || "#1f4e79"}">📷</div>` }) }),
+    style: f => ({ color: colourOf[f.properties.name], weight: 5, opacity: 0.9, lineCap: "round", lineJoin: "round" }),
     onEachFeature: (f, layer) => {
       const p = f.properties;
-      layer.bindPopup(`<img src="${esc(p.img)}" alt="Photo from ${esc(p.name)}'s route" loading="lazy">
-        <div class="pname">${esc(p.name)}</div>${p.caption ? `<div class="pcap">${esc(p.caption)}</div>` : ""}`,
-        { maxWidth: 320 });
+      layerOf[p.name] = layer;
+      layer.bindTooltip(`<b>${esc(p.name)}</b> · ${p.km} km`, { sticky: true, className: "route-label" });
+      layer.on("mouseover", () => highlight(p.name));
+      layer.on("mouseout",  () => unhighlight(p.name));
+      layer.on("click", () => markerOf[p.name] ? markerOf[p.name].openPopup() : null);
     }
   }).addTo(map);
 
-  const all = L.featureGroup([routeLayer, photoLayer]);
-  const fitAll = () => all.getLayers().length
-    ? map.fitBounds(all.getBounds(), { padding: [30, 30] })
-    : map.setView([53.4066, -2.9665], 13);
-  fitAll();
-  L.control.layers(null, { "Routes": routeLayer, "Photos": photoLayer }, { collapsed: false }).addTo(map);
+  const photoLayer = L.layerGroup().addTo(map);
+  photos.forEach(f => {
+    const p = f.properties, [lon, lat] = f.geometry.coordinates;
+    const c = colourOf[p.name] || "#0e1e25";
+    const m = L.marker([lat, lon], {
+      riseOnHover: true,
+      icon: L.divIcon({ className: "", iconSize: [46, 46], iconAnchor: [23, 23], popupAnchor: [0, -20],
+        html: `<div class="thumb" style="--c:${c};background-image:url('${esc(p.thumb)}')"></div>` })
+    });
+    m.bindPopup(`<img src="${esc(p.img)}" alt="Photo from ${esc(p.name)}'s route">
+      <div class="pname" style="color:${c}">${esc(p.name)}</div>${p.caption ? `<div class="pcap">${esc(p.caption)}</div>` : ""}`,
+      { maxWidth: 360, autoPanPadding: [40, 40] });
+    m.on("mouseover", () => highlight(p.name));
+    m.on("mouseout",  () => unhighlight(p.name));
+    m.on("popupopen", () => highlight(p.name));
+    m.on("popupclose", () => unhighlight(p.name));
+    markerOf[p.name] = m;
+    photoLayer.addLayer(m);
+  });
 
-  // people list
+  // ---- views
+  const btns = ["v-city", "v-all", "v-photos", "v-tour"].map(id => document.getElementById(id));
+  const setOn = id => btns.forEach(b => b.classList.toggle("on", b.id === id));
+  let touring = null;
+  const stopTour = () => { if (touring) { clearTimeout(touring); touring = null; btns[3].textContent = "▶ Photo tour"; } };
+  const showRoutes = on => [casing, routeLayer].forEach(l => on ? l.addTo(map) : map.removeLayer(l));
+
+  const viewCity = () => { stopTour(); showRoutes(true); map.flyToBounds(CITY, { duration: 0.8 }); setOn("v-city"); };
+  const viewAll  = () => { stopTour(); showRoutes(true); map.flyToBounds(routeLayer.getBounds(), { padding: [30, 30], duration: 0.8 }); setOn("v-all"); };
+  const viewPhotos = () => {
+    stopTour(); showRoutes(false); map.closePopup();
+    const g = L.featureGroup(Object.values(markerOf));
+    map.flyToBounds(g.getBounds(), { padding: [50, 50], duration: 0.8 }); setOn("v-photos");
+  };
+  const tour = () => {
+    if (touring) { stopTour(); return; }
+    showRoutes(true); setOn("v-tour"); btns[3].textContent = "■ Stop tour";
+    const names = Object.keys(markerOf).sort();
+    let i = 0;
+    const step = () => {
+      const name = names[i % names.length], m = markerOf[name];
+      map.flyTo(m.getLatLng(), 15, { duration: 1.5 });
+      setTimeout(() => m.openPopup(), 1600);
+      i++; touring = setTimeout(step, 7000);
+    };
+    step();
+  };
+  btns[0].onclick = viewCity; btns[1].onclick = viewAll; btns[2].onclick = viewPhotos; btns[3].onclick = tour;
+  map.fitBounds(CITY);
+
+  // ---- people list
   const list = document.getElementById("people");
-  const allBtn = document.createElement("button");
-  allBtn.innerHTML = "<b>Show everyone</b>";
-  allBtn.onclick = fitAll;
-  list.appendChild(allBtn);
   routes.map(f => f.properties).sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
     const b = document.createElement("button");
-    b.innerHTML = `<span class="sw" style="background:${colourOf[p.name]}"></span>${esc(p.name)}<span class="km">${p.km} km</span>`;
+    b.innerHTML = `<span class="sw" style="background:${colourOf[p.name]}"></span>${esc(p.name)}`
+      + (markerOf[p.name] ? ' <span class="cam-s">📷</span>' : "") + `<span class="km">${p.km} km</span>`;
     b.onclick = () => {
-      const layer = layerOf[p.name];
-      map.fitBounds(layer.getBounds(), { padding: [60, 60], maxZoom: 16 });
-      layer.setStyle({ weight: 10, opacity: 1 }); layer.bringToFront();
-      setTimeout(() => routeLayer.resetStyle(layer), 2500);
+      stopTour(); showRoutes(true);
+      map.flyToBounds(layerOf[p.name].getBounds(), { padding: [60, 60], maxZoom: 16, duration: 0.8 });
+      highlight(p.name);
+      if (markerOf[p.name]) setTimeout(() => markerOf[p.name].openPopup(), 900);
+      setTimeout(() => unhighlight(p.name), 3000);
     };
-    b.onmouseenter = () => { layerOf[p.name].setStyle({ weight: 9, opacity: 1 }); layerOf[p.name].bringToFront(); };
-    b.onmouseleave = () => routeLayer.resetStyle(layerOf[p.name]);
+    b.onmouseenter = () => highlight(p.name);
+    b.onmouseleave = () => unhighlight(p.name);
     list.appendChild(b);
   });
 })();

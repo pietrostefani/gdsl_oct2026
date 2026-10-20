@@ -33,6 +33,7 @@ OUT = ROOT / "data"
 OUT_PHOTOS = OUT / "photos"
 TRIM_M = 150          # metres trimmed from each end of a route (privacy)
 PHOTO_PX = 1200       # longest side of published photos
+SNAP_M = 300         # photos further than this from the route are moved onto it
 METRIC = 27700        # British National Grid, for lengths and trimming
 
 PHOTO_EXT = {".jpg", ".jpeg", ".png", ".heic", ".webp"}
@@ -41,7 +42,8 @@ PHOTO_EXT = {".jpg", ".jpeg", ".png", ".heic", ".webp"}
 def person_name(path: Path) -> str:
     """'carmen_cabrera-route.geojson' -> 'Carmen Cabrera'."""
     stem = re.sub(r"(?i)[-_ ]?(route|path|walk|commute|photo|pic)$", "", path.stem)
-    return re.sub(r"[_\-]+", " ", stem).strip().title()
+    name = re.sub(r"[_\-]+", " ", stem).strip()
+    return " ".join(w[:1].upper() + w[1:] for w in name.split())
 
 
 def read_route(path: Path):
@@ -82,21 +84,20 @@ def read_route(path: Path):
             lines = [LineString([(p.x, p.y) for p in pts])]
     if not lines:
         return None
+    lines = [LineString([(c[0], c[1]) for c in l.coords]) for l in lines if len(l.coords) >= 2]
     merged = linemerge(MultiLineString(lines)) if len(lines) > 1 else lines[0]
-    if merged.geom_type == "MultiLineString":   # disconnected pieces: keep the longest
-        merged = max(merged.geoms, key=lambda l: l.length)
-    # drop Z / M values
-    return LineString([(c[0], c[1]) for c in merged.coords])
+    return merged   # LineString, or MultiLineString if the pieces don't join up
 
 
-def trim(line_wgs84: LineString):
-    """Remove TRIM_M metres from each end; return (trimmed line in 4326, length km)."""
-    g = gpd.GeoSeries([line_wgs84], crs=4326).to_crs(METRIC)
-    line = g.iloc[0]
-    length = line.length
-    if length > 4 * TRIM_M:
-        line = substring(line, TRIM_M, length - TRIM_M)
-    out = gpd.GeoSeries([line], crs=METRIC).to_crs(4326).iloc[0]
+def trim(geom_wgs84):
+    """Remove TRIM_M metres from each end of every piece; return (geom in 4326, length km)."""
+    geom = gpd.GeoSeries([geom_wgs84], crs=4326).to_crs(METRIC).iloc[0]
+    parts = list(geom.geoms) if geom.geom_type == "MultiLineString" else [geom]
+    length = sum(p.length for p in parts)
+    out_parts = [substring(p, TRIM_M, p.length - TRIM_M) if p.length > 4 * TRIM_M else p
+                 for p in parts]
+    geom = out_parts[0] if len(out_parts) == 1 else MultiLineString(out_parts)
+    out = gpd.GeoSeries([geom], crs=METRIC).to_crs(4326).iloc[0]
     return out, round(length / 1000, 1)
 
 
@@ -109,7 +110,10 @@ def exif_gps(img: Image.Image):
             d, m, s = [float(x) for x in v]
             val = d + m / 60 + s / 3600
             return -val if ref in ("S", "W") else val
-        return dec(gps[2], gps[1]), dec(gps[4], gps[3])   # lat, lon
+        lat, lon = dec(gps[2], gps[1]), dec(gps[4], gps[3])
+        if not (-90 <= lat <= 90 and -180 <= lon <= 180) or (lat == 0 and lon == 0):
+            return None
+        return lat, lon
     except Exception:
         return None
 
@@ -149,7 +153,7 @@ def main():
         except Exception as e:
             problems.append(f"{path.name}: could not read ({e})")
             continue
-        if line is None or len(line.coords) < 2:
+        if line is None or line.is_empty:
             problems.append(f"{path.name}: no line found")
             continue
         line, km = trim(line)
@@ -179,6 +183,14 @@ def main():
             gps, placed = (mid.y, mid.x), "route midpoint"
         else:
             placed = "photo GPS" if gps else None
+        if gps is not None and placed == "photo GPS" and name in by_name:
+            # keep photos on the route: snap anything more than SNAP_M away
+            route_m = gpd.GeoSeries([by_name[name]], crs=4326).to_crs(METRIC).iloc[0]
+            pt_m = gpd.GeoSeries([Point(gps[1], gps[0])], crs=4326).to_crs(METRIC).iloc[0]
+            if route_m.distance(pt_m) > SNAP_M:
+                snapped = route_m.interpolate(route_m.project(pt_m))
+                s = gpd.GeoSeries([snapped], crs=METRIC).to_crs(4326).iloc[0]
+                gps, placed = (s.y, s.x), "snapped to route"
         if gps is None:
             problems.append(f"{path.name}: no location and no route to place it on")
             continue
@@ -188,10 +200,13 @@ def main():
         slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
         out_path = OUT_PHOTOS / f"{slug}.jpg"
         img.save(out_path, "JPEG", quality=82, optimize=True)   # no exif= -> no metadata
+        th = ImageOps.fit(img, (120, 120))
+        th.save(OUT_PHOTOS / f"{slug}-thumb.jpg", "JPEG", quality=80)
         photos.append({
             "name": name,
             "caption": (cap.get("caption") or "").strip(),
             "img": f"data/photos/{slug}.jpg",
+            "thumb": f"data/photos/{slug}-thumb.jpg",
             "placed": placed,
             "geometry": Point(gps[1], gps[0]),
         })

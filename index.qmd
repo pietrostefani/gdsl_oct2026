@@ -3,7 +3,9 @@ title: " "
 ---
 
 ::: {.hero}
-# GDSL Away Day
+<img src="assets/gdsl_logo.png" alt="Geographic Data Science Lab" class="hero-logo">
+
+# Away Day
 <div class="when">Wednesday 21 October 2026 · 13:00–15:00</div>
 :::
 

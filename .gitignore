@@ -1,6 +1,5 @@
 raw/
 _site/
-docs/data/photos/demo-*
 .quarto/
 __pycache__/
 *_files/
