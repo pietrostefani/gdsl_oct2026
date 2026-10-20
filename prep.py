@@ -162,6 +162,16 @@ def main():
         else gpd.GeoDataFrame({"name": [], "km": []}, geometry=[], crs=4326)
     routes_gdf = routes_gdf.sort_values("name").reset_index(drop=True)
 
+    # display first names only; add an initial where two people share a first name
+    def short_names(full_names):
+        firsts = [n.split()[0] for n in full_names]
+        out = {}
+        for full, first in zip(full_names, firsts):
+            parts = full.split()
+            dup = firsts.count(first) > 1 and len(parts) > 1
+            out[full] = f"{first} {parts[1][0]}" if dup else first
+        return out
+
     # ---- photos
     photos = []
     by_name = {r["name"]: r["geometry"] for r in routes}
@@ -213,6 +223,16 @@ def main():
     photos_gdf = gpd.GeoDataFrame(photos, geometry="geometry", crs=4326) if photos \
         else gpd.GeoDataFrame({"name": []}, geometry=[], crs=4326)
 
+    short = short_names(sorted(set(routes_gdf["name"]) | set(photos_gdf["name"] if len(photos_gdf) else [])))
+    routes_gdf["name"] = routes_gdf["name"].map(short)
+    if len(photos_gdf):
+        photos_gdf["name"] = photos_gdf["name"].map(short)
+        for i, row in photos_gdf.iterrows():   # file names follow the display name too
+            slug = re.sub(r"[^a-z0-9]+", "-", row["name"].lower()).strip("-")
+            for col, suffix in (("img", ""), ("thumb", "-thumb")):
+                new = f"data/photos/{slug}{suffix}.jpg"
+                (ROOT / row[col]).rename(ROOT / new)
+                photos_gdf.at[i, col] = new
     routes_gdf.to_file(OUT / "routes.geojson", driver="GeoJSON")
     photos_gdf.to_file(OUT / "photos.geojson", driver="GeoJSON")
 

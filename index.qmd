@@ -11,7 +11,7 @@ title: " "
 
 This year, no lightning talks. Instead: a map of how we all move through Liverpool, some quick conversations, and a world café to find out what we each work on, struggle with, and could teach each other.
 
-## Agenda
+## Programme
 
 <table class="agenda">
 <tr><td class="t">13:00 – 13:05</td><td><div class="what">Welcome & Our Liverpool</div><div class="how">We open with the <a href="map.html">map of everyone's routes and photos</a>.</div></td></tr>

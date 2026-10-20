@@ -13,7 +13,7 @@ website:
     logo: assets/gdsl_icon.png
     left:
       - href: index.qmd
-        text: Agenda
+        text: Programme
       - href: map.qmd
         text: Our Liverpool
       - href: tables.qmd
