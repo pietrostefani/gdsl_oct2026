@@ -6,7 +6,7 @@ project:
     - assets/
 
 website:
-  title: "GDSL Away Day"
+  title: "GDSL Away Afternoon"
   favicon: assets/gdsl_icon.png
   page-navigation: false
   navbar:

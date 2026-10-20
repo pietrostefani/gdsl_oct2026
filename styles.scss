@@ -69,3 +69,7 @@ $headings-font-weight: 700;
   .cafe tr { display: block; border-left: 5px solid var(--c); margin-bottom: 1rem; }
   .cafe td { display: block; border: 0 !important; padding: .3rem .8rem; width: auto !important; }
 }
+.logos { display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.logos .hero-logo { margin-bottom: 0; }
+.logos .uol { height: 64px; }
+@media (max-width: 600px) { .logos .hero-logo { height: 60px; } .logos .uol { height: 44px; } }

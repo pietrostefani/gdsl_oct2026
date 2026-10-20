@@ -1,4 +1,4 @@
-# GDSL Away Day — 21 October 2026
+# GDSL Away Afternoon — 21 October 2026
 
 Quarto website: agenda, "Our Liverpool" route map, and world café tables with Padlet links.
 Published with GitHub Pages from the `docs/` folder on `main`.

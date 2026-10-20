@@ -3,9 +3,9 @@ title: " "
 ---
 
 ::: {.hero}
-<img src="assets/gdsl_logo.png" alt="Geographic Data Science Lab" class="hero-logo">
+<div class="logos"><img src="assets/gdsl_logo.png" alt="Geographic Data Science Lab" class="hero-logo"><img src="assets/uol_logo.png" alt="University of Liverpool" class="hero-logo uol"></div>
 
-# Away Day
+# Away Afternoon
 <div class="when">Wednesday 21 October 2026 · 13:00–15:00</div>
 :::
 
