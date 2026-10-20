@@ -65,6 +65,20 @@ out.append("</div>")
 print("\n".join(out))
 ```
 
+## Live boards
+
+::: {.panel-tabset}
+
+### Board 1 · World café
+
+<div class="padlet-embed"><iframe src="https://padlet.com/embed/s024oui8r2lbdhghcqwk" title="Padlet: GDSL Away Afternoon World café" frameborder="0" allow="camera;microphone;geolocation;display-capture;clipboard-write"></iframe></div>
+
+### Board 2 · Our places
+
+<div class="padlet-embed"><iframe src="https://padlet.com/embed/s024ou969hs2pki1kago" title="Padlet: GDSL Away Afternoon Our places" frameborder="0" allow="camera;microphone;geolocation;display-capture;clipboard-write"></iframe></div>
+
+:::
+
 ## Table hosts
 
 Keep the conversation going, make sure ideas land on the Padlet, and get ready to pitch your table's highlights (about 4 minutes) at 14:35.

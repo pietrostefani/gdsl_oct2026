@@ -87,3 +87,5 @@ $headings-font-weight: 700;
 .qrbox .qr { width: 200px; height: 200px; }
 .qrs { grid-template-columns: repeat(auto-fit, minmax(240px, 320px)); }
 @media (max-width: 800px) { .cafe tr.board { display: block; border-left: 0; } .cafe tr.board .board-btn { float: none; display: inline-block; margin-top: .5rem; } .cafe .tcol { white-space: normal; } }
+.padlet-embed { border: 1px solid #e3e8ee; border-radius: 10px; overflow: hidden; background: #f4f4f4; }
+.padlet-embed iframe { width: 100%; height: 75vh; min-height: 560px; display: block; border: 0; }
