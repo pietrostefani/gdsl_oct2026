@@ -16,6 +16,8 @@
 { "type": "Feature", "properties": { "name": "Matt T", "caption": "", "img": "data/photos/matt-t.jpg", "thumb": "data/photos/matt-t-thumb.jpg", "placed": "photo GPS" }, "geometry": { "type": "Point", "coordinates": [ -2.988672222222222, 53.41618888888889 ] } },
 { "type": "Feature", "properties": { "name": "Olivia", "caption": "", "img": "data/photos/olivia.jpg", "thumb": "data/photos/olivia-thumb.jpg", "placed": "photo GPS" }, "geometry": { "type": "Point", "coordinates": [ -2.996975, 53.40551111111111 ] } },
 { "type": "Feature", "properties": { "name": "Owen", "caption": "", "img": "data/photos/owen.jpg", "thumb": "data/photos/owen-thumb.jpg", "placed": "photo GPS" }, "geometry": { "type": "Point", "coordinates": [ -2.977102777777778, 53.407355555555554 ] } },
+{ "type": "Feature", "properties": { "name": "Sadaf", "caption": "", "img": "data/photos/sadaf.jpg", "thumb": "data/photos/sadaf-thumb.jpg", "placed": "route midpoint" }, "geometry": { "type": "Point", "coordinates": [ -2.970512763540809, 53.401561014132312 ] } },
+{ "type": "Feature", "properties": { "name": "Yifu", "caption": "", "img": "data/photos/yifu.jpg", "thumb": "data/photos/yifu-thumb.jpg", "placed": "photo GPS" }, "geometry": { "type": "Point", "coordinates": [ -2.976094444444445, 53.402130555555551 ] } },
 { "type": "Feature", "properties": { "name": "Yujun", "caption": "", "img": "data/photos/yujun.jpg", "thumb": "data/photos/yujun-thumb.jpg", "placed": "photo GPS" }, "geometry": { "type": "Point", "coordinates": [ -2.970252777777778, 53.401536111111106 ] } }
 ]
 }
